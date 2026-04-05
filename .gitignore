@@ -1,0 +1,15 @@
+# Build outputs
+**/target/
+**/build/
+
+# IDE and OS
+.vscode/
+.idea/
+*.iml
+.DS_Store
+
+# Logs
+*.log
+
+# Local env files
+.env
