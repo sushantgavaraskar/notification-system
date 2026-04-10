@@ -6,7 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
-$maven = Join-Path $root ".tools\apache-maven-3.9.6\bin\mvn.cmd"
+$localMaven = Join-Path $root ".tools\apache-maven-3.9.6\bin\mvn.cmd"
 $infraCompose = Join-Path $root "infra\docker-compose.yml"
 $runtimeDir = Join-Path $root ".demo"
 $logsDir = Join-Path $runtimeDir "logs"
@@ -37,9 +37,18 @@ if (-not (Get-Command java -ErrorAction SilentlyContinue)) {
     throw "Java is not installed or not on PATH."
 }
 
-if (-not (Test-Path $maven)) {
-    throw "Local Maven not found at $maven"
+if (Test-Path $localMaven) {
+    $maven = $localMaven
 }
+else {
+    $mavenCmd = Get-Command mvn.cmd,mvn -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($null -eq $mavenCmd) {
+        throw "Maven not found. Install Maven and ensure 'mvn' is on PATH, or place local Maven at $localMaven"
+    }
+    $maven = $mavenCmd.Source
+}
+
+Write-Host "Using Maven: $maven"
 
 New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
 

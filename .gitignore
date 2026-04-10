@@ -17,6 +17,7 @@
 
 # Optional local Maven toolchain cache
 .tools-cache/
+.tools/
 
 # Local env files
 .env
