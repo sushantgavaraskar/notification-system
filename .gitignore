@@ -11,5 +11,12 @@
 # Logs
 *.log
 
+# Local demo runtime artifacts
+.demo/
+*.pid
+
+# Optional local Maven toolchain cache
+.tools-cache/
+
 # Local env files
 .env

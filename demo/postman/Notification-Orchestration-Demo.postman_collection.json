@@ -1,0 +1,227 @@
+{
+  "info": {
+    "_postman_id": "0f8f87fd-48e7-4a53-9559-b1eb6e7f9f0c",
+    "name": "Notification Orchestration Demo",
+    "description": "Demo collection for event producer, orchestration flow triggers, and delivery service verification.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1) List Demo Scenarios",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{eventProducerBaseUrl}}/api/events/demo/scenarios",
+          "host": [
+            "{{eventProducerBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "demo",
+            "scenarios"
+          ]
+        },
+        "description": "Lists supported scenario names for quick trigger calls."
+      },
+      "response": []
+    },
+    {
+      "name": "2) Trigger Full Story Scenario",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{eventProducerBaseUrl}}/api/events/demo/full-story?userId={{userId}}",
+          "host": [
+            "{{eventProducerBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "demo",
+            "full-story"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{userId}}"
+            }
+          ]
+        },
+        "description": "Publishes the complete multi-event story to drive the full pipeline."
+      },
+      "response": []
+    },
+    {
+      "name": "3) Trigger Any Scenario",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{eventProducerBaseUrl}}/api/events/demo/{{scenario}}?userId={{userId}}",
+          "host": [
+            "{{eventProducerBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "events",
+            "demo",
+            "{{scenario}}"
+          ],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{userId}}"
+            }
+          ]
+        },
+        "description": "Scenario examples: message-burst, battery-low, user-inactive, critical-alert, full-story."
+      },
+      "response": []
+    },
+    {
+      "name": "4) Publish Custom Raw Event",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "let data = {};",
+              "try { data = pm.response.json(); } catch (e) {}",
+              "if (data.eventId) {",
+              "  pm.environment.set('lastEventId', data.eventId);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"eventId\": \"\",\n  \"userId\": \"{{userId}}\",\n  \"type\": \"CRITICAL_ALERT\",\n  \"priority\": \"CRITICAL\",\n  \"message\": \"Suspicious login detected from new location\",\n  \"createdAt\": 0,\n  \"metadata\": {\n    \"source\": \"postman-demo\",\n    \"active\": false,\n    \"region\": \"IN\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{eventProducerBaseUrl}}/api/events",
+          "host": [
+            "{{eventProducerBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "events"
+          ]
+        },
+        "description": "Publishes a fully custom raw event to the raw-events topic via event-producer."
+      },
+      "response": []
+    },
+    {
+      "name": "5) Delivery Service Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{deliveryBaseUrl}}/api/health",
+          "host": [
+            "{{deliveryBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        },
+        "description": "Checks delivery-service API health endpoint."
+      },
+      "response": []
+    },
+    {
+      "name": "6) Get Recent Delivered Notifications",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{deliveryBaseUrl}}/api/notifications/recent",
+          "host": [
+            "{{deliveryBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "notifications",
+            "recent"
+          ]
+        },
+        "description": "Reads the in-memory recent notification feed from delivery-service."
+      },
+      "response": []
+    },
+    {
+      "name": "7) Event Producer Actuator Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{eventProducerBaseUrl}}/actuator/health",
+          "host": [
+            "{{eventProducerBaseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "health"
+          ]
+        },
+        "description": "Checks event-producer health via Spring Actuator."
+      },
+      "response": []
+    },
+    {
+      "name": "8) Kafka UI",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{kafkaUiBaseUrl}}",
+          "host": [
+            "{{kafkaUiBaseUrl}}"
+          ]
+        },
+        "description": "Opens Kafka UI endpoint used during the live architecture demo."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "eventProducerBaseUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "deliveryBaseUrl",
+      "value": "http://localhost:8085"
+    },
+    {
+      "key": "kafkaUiBaseUrl",
+      "value": "http://localhost:8088"
+    },
+    {
+      "key": "userId",
+      "value": "user-1"
+    },
+    {
+      "key": "scenario",
+      "value": "full-story"
+    }
+  ]
+}
