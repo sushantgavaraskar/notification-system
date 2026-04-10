@@ -13,7 +13,12 @@
 
 # Local demo runtime artifacts
 .demo/
+demo/
 *.pid
+
+# Local test artifacts/sources (if kept only for local runs)
+**/src/test/
+**/surefire-reports/
 
 # Optional local Maven toolchain cache
 .tools-cache/
